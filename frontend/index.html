@@ -2,14 +2,41 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>FitTrack</title>
+  <title>FitTrack – Dashboard</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
-  <h1>FitTrack</h1>
-  <nav>
-    <a href="treino.html">Registrar Treino</a> |
-    <a href="refeicao.html">Registrar Refeição</a>
-  </nav>
+  <div class="container">
+    <div class="card">
+      <h1>Dashboard Semanal</h1>
+      <nav>
+        <a href="index.html">Início</a> |
+        <a href="treino.html">Treinos</a> |
+        <a href="refeicao.html">Refeições</a>
+      </nav>
+
+      <div id="stats" class="stats-grid">
+        <div class="stat">
+          <div class="stat-value" id="statTreinos">0</div>
+          <div class="stat-label">Treinos nesta semana</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="statProteina">0 g</div>
+          <div class="stat-label">Proteína ingerida (semana)</div>
+        </div>
+      </div>
+
+      <h2>Últimos Registros</h2>
+      <div class="card">
+        <h3>Refeições recentes</h3>
+        <ul id="ultimasRefeicoes"></ul>
+      </div>
+      <div class="card">
+        <h3>Treinos recentes</h3>
+        <ul id="ultimosTreinos"></ul>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

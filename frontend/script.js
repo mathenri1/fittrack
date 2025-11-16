@@ -1,7 +1,6 @@
 const apiBase = "http://127.0.0.1:5000/api";
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Treinos (já existia)
   const treinoForm = document.getElementById("formTreino");
   if (treinoForm) {
     treinoForm.addEventListener("submit", async e => {
@@ -19,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
     carregarTreinos();
   }
 
-  // Refeições (NOVIDADE)
   const refeicaoForm = document.getElementById("formRefeicao");
   if (refeicaoForm) {
     refeicaoForm.addEventListener("submit", async e => {
@@ -47,7 +45,6 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 
-// funções
 async function carregarTreinos() {
   const ul = document.getElementById("listaTreinos");
   if (!ul) return;
@@ -114,4 +111,59 @@ async function carregarRefeicoes() {
     ul.appendChild(li);
   });
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  if (document.getElementById("statTreinos")) {
+    carregarDashboardSemanal();
+  }
+});
+
+async function carregarDashboardSemanal() {
+  const [treinosRes, refeRes] = await Promise.all([
+    fetch(`${apiBase}/treinos/`),
+    fetch(`${apiBase}/refeicoes/`)
+  ]);
+  const [treinos, refeicoes] = [await treinosRes.json(), await refeRes.json()];
+
+  const now = new Date();
+  const diaSemana = (now.getDay() + 6) % 7;
+  const inicio = new Date(now); inicio.setHours(0,0,0,0); inicio.setDate(now.getDate() - diaSemana);
+  const fim = new Date(inicio); fim.setDate(inicio.getDate() + 7);
+
+  const isInWeek = iso => {
+    if (!iso) return false;
+    const d = new Date(iso);
+    return d >= inicio && d < fim;
+  };
+
+  const treinosSemana = treinos.filter(t => isInWeek(t.data_hora)).length;
+  const proteinaSemana = refeicoes
+    .filter(r => isInWeek(r.data_hora))
+    .reduce((sum, r) => sum + (parseFloat(r.proteina_g || 0) || 0), 0);
+
+  document.getElementById("statTreinos").textContent = treinosSemana;
+  document.getElementById("statProteina").textContent = `${proteinaSemana} g`;
+
+  const ultRef = [...refeicoes].sort((a,b)=> new Date(b.data_hora)-new Date(a.data_hora)).slice(0,5);
+  const ultTre = [...treinos].sort((a,b)=> new Date(b.data_hora)-new Date(a.data_hora)).slice(0,5);
+
+  const ulRef = document.getElementById("ultimasRefeicoes");
+  const ulTre = document.getElementById("ultimosTreinos");
+  ulRef.innerHTML = ""; ulTre.innerHTML = "";
+
+  ultRef.forEach(r => {
+    const li = document.createElement("li");
+    const d = r.data_hora ? r.data_hora.split("T")[0] : "";
+    li.textContent = `${d} — ${r.descricao} (P:${r.proteina_g ?? 0}g)`;
+    ulRef.appendChild(li);
+  });
+
+  ultTre.forEach(t => {
+    const li = document.createElement("li");
+    const d = t.data_hora ? t.data_hora.split("T")[0] : "";
+    li.textContent = `${d} — ${t.observacoes || "(sem observações)"} (Esforço ${t.percepcao_esforco ?? "-"})`;
+    ulTre.appendChild(li);
+  });
+}
+
 

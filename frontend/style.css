@@ -124,3 +124,36 @@ li span {
   color: var(--muted);
   font-size: 14px;
 }
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin: 20px 0 10px;
+}
+
+.stat {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  text-align: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,.06);
+}
+
+.stat-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1.1;
+}
+
+.stat-label {
+  color: var(--muted);
+  margin-top: 6px;
+  font-size: 14px;
+}
+@media (max-width: 600px) {
+  .stats-grid { grid-template-columns: 1fr; }
+}
+
